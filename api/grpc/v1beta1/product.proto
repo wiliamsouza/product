@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package grpc.v1beta1;
+
+import "gogoproto/gogo.proto";
+
+option csharp_namespace = "Grpc.V1Beta1";
+option go_package = "grpcv1beta1";
+option java_multiple_files = true;
+option java_outer_classname = "ProductProto";
+option java_package = "com.grpc.v1beta1";
+option objc_class_prefix = "GXX";
+option php_namespace = "Grpc\\V1Beta1";
+
+// Product message.
+message Product {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  int32 price_in_cents = 4;
+}

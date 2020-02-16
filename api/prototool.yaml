@@ -1,0 +1,25 @@
+excludes:
+  - .third_party
+protoc:
+  version: 3.7.1
+  includes:
+    - .third_party/googleapis
+    - .third_party/gogo
+lint:
+  group: uber2
+create:
+  packages:
+    - directory: v1alpha1
+      name: v1alpha1
+generate:
+  go_options:
+    import_path: wiliam.dev/product/api
+  plugins:
+    - name: gogo
+      type: gogo
+      flags: plugins=grpc
+      output: ../
+
+    - name: grpc-gateway
+      type: go
+      output: ../
