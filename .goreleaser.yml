@@ -1,0 +1,49 @@
+before:
+  hooks:
+    - go mod download
+builds:
+-
+  id: productctl
+  main: ./cmd/productctl
+  binary: productctl
+  ldflags:
+    - -s -w -X wiliam.dev/marketplace/cataloging/product/cmd/productctl/cmd.version={{.Version}} -X wiliam.dev/marketplace/cataloging/product/cmd/productctl/cmd.commit={{.ShortCommit}} -X wiliam.dev/marketplace/cataloging/product/cmd/productctl/cmd.date={{.Date}}
+  goarch:
+    - amd64
+  env:
+    - CGO_ENABLED=0
+-
+  id: productd
+  main: ./cmd/productd
+  binary: productd
+  ldflags:
+    - -s -w -X wiliam.dev/marketplace/cataloging/product/cmd/productd/cmd.version={{.Version}} -X wiliam.dev/marketplace/cataloging/product/cmd/productd/cmd.commit={{.ShortCommit}} -X wiliam.dev/marketplace/cataloging/product/cmd/productd/cmd.date={{.Date}}
+  goarch:
+    - amd64
+  env:
+    - CGO_ENABLED=0
+archives:
+-
+  id: productctl
+  format: binary
+  replacements:
+    darwin: Darwin
+    linux: Linux
+    windows: Windows
+-
+  id: productd
+  format: binary
+  replacements:
+    darwin: Darwin
+    linux: Linux
+    windows: Windows
+checksum:
+  name_template: checksums.txt
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - "^docs:"
+    - "^test:"
