@@ -7,7 +7,7 @@ builds:
   main: ./cmd/productctl
   binary: productctl
   ldflags:
-    - -s -w -X wiliam.dev/marketplace/cataloging/product/cmd/productctl/cmd.version={{.Version}} -X wiliam.dev/marketplace/cataloging/product/cmd/productctl/cmd.commit={{.ShortCommit}} -X wiliam.dev/marketplace/cataloging/product/cmd/productctl/cmd.date={{.Date}}
+    - -s -w -X wiliam.dev/product/cmd/productctl/cmd.version={{.Version}} -X wiliam.dev/product/cmd/productctl/cmd.commit={{.ShortCommit}} -X wiliam.dev/product/cmd/productctl/cmd.date={{.Date}}
   goarch:
     - amd64
   env:
@@ -17,7 +17,7 @@ builds:
   main: ./cmd/productd
   binary: productd
   ldflags:
-    - -s -w -X wiliam.dev/marketplace/cataloging/product/cmd/productd/cmd.version={{.Version}} -X wiliam.dev/marketplace/cataloging/product/cmd/productd/cmd.commit={{.ShortCommit}} -X wiliam.dev/marketplace/cataloging/product/cmd/productd/cmd.date={{.Date}}
+    - -s -w -X wiliam.dev/product/cmd/productd/cmd.version={{.Version}} -X wiliam.dev/product/cmd/productd/cmd.commit={{.ShortCommit}} -X wiliam.dev/product/cmd/productd/cmd.date={{.Date}}
   goarch:
     - amd64
   env:
