@@ -37,6 +37,20 @@ To create a new migration use:
 migrate create -ext .sql -dir scripts/migrations/ <migration_name>
 ```
 
+## Docker
+
+Build:
+
+```bash
+docker build -t wiliam.dev/product .
+```
+
+Run:
+
+```bash
+docker run --rm wiliam.dev/product
+```
+
 ## FAQ
 
 Why use diferente models for each layer(ie: grpc, domain and database)?
