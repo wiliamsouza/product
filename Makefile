@@ -45,7 +45,7 @@ build: ## Compile project
 	goreleaser --snapshot --skip-publish --rm-dist
 
 migrate: ## Run database migrations 
-	migrate -path scripts/migrations/ -database postgres://cataloging:cataloging@127.0.0.1:5432/cataloging?sslmode=disable up 1
+	migrate -path scripts/migrations/ -database postgres://postgres:swordfish@127.0.0.1:5432/product?sslmode=disable up 1
 
 populate: ## Populate database with mocked data
-	migrate -path scripts/migrations/ -database postgres://cataloging:cataloging@127.0.0.1:5432/cataloging?sslmode=disable up 1
+	migrate -path scripts/migrations/ -database postgres://postgres:swordfish@127.0.0.1:5432/product?sslmode=disable up 1
