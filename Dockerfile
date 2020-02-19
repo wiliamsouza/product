@@ -11,6 +11,6 @@ RUN cd /src && make deps && make build
 FROM alpine
 WORKDIR /usr/sbin
 COPY --from=build /src/dist/productd_linux_amd64/productd /usr/sbin/
-COPY --from=build /src/dist/productctl/productctl /usr/sbin/
+COPY --from=build /src/dist/productctl_linux_amd64/productctl /usr/sbin/
 ENTRYPOINT ["/usr/sbin/productd"]
 CMD ["help"]
