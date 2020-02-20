@@ -1,7 +1,7 @@
 excludes:
   - .third_party
 protoc:
-  version: 3.7.1
+  version: 3.11.2
   includes:
     - .third_party/googleapis
     - .third_party/gogo
