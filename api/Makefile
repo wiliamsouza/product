@@ -15,5 +15,5 @@ help: ## Show Help
 lint: ## List protocol buffer definitions
 	prototool lint
 
-generate: ## Genereate gRPC and reverse proxy stubs
+generate: ## Genereate gRPC and HTTP reverse proxy stubs
 	prototool generate
