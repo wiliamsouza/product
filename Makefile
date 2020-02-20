@@ -37,9 +37,12 @@ mock: ## Generate mocks for repositories and services interfaces
 	mockery -name DataStore
 	mockery -name UseCase
 
+coverage:
+	go tool cover -func=count.out
+
 test: ## Run unit tests
 	go test -covermode=count -coverprofile=count.out -v ./...
-	go tool cover -func=count.out
+	$(MAKE) coverage
 
 build: ## Compile project
 	goreleaser --snapshot --skip-publish --rm-dist
