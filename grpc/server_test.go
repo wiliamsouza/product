@@ -26,7 +26,7 @@ func TestGRPCServer(t *testing.T) {
 				PriceInCents: 10,
 			},
 		}
-		grpcProducts := []*grpcv1.Product{
+		grpcProducts := []*grpcv1.CreateProductResponse{
 			{
 				Id:           products[0].ID,
 				Title:        "Mussum Ipsum",
@@ -61,7 +61,7 @@ func TestGRPCServer(t *testing.T) {
 				PriceInCents: 15,
 			},
 		}
-		grpcProducts := []*grpcv1.Product{
+		grpcProducts := []*grpcv1.CreateProductResponse{
 			{
 				Id:           products[0].ID,
 				Title:        "Mussum Ipsum",

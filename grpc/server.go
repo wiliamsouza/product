@@ -4,6 +4,8 @@ import (
 	"context"
 
 	"go.opencensus.io/trace"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"wiliam.dev/product"
 	grpcv1 "wiliam.dev/product/grpc/v1beta1"
 )
@@ -38,10 +40,10 @@ func (s *ProductAPIServer) ListProducts(
 	}, "Products listed")
 
 	// TODO: Preallocate our initial slice for pagination values.
-	var p []*grpcv1.Product
+	var p []*grpcv1.CreateProductResponse
 	for _, product := range products {
 		p = append(p,
-			&grpcv1.Product{
+			&grpcv1.CreateProductResponse{
 				Id:           product.ID,
 				Title:        product.Title,
 				Description:  product.Description,
@@ -56,6 +58,11 @@ func (s *ProductAPIServer) ListProducts(
 
 	response := &grpcv1.ListProductsResponse{Products: p}
 	return response, nil
+}
+
+// CreateProduct ...
+func (s *ProductAPIServer) CreateProduct(ctx context.Context, r *grpcv1.CreateProductRequest) (*grpcv1.CreateProductResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateProduct not implemented")
 }
 
 // NewProductAPIServer create a grpc product API server
