@@ -10,7 +10,7 @@ option objc_class_prefix = "GXX";
 option php_namespace = "Grpc\\V1Beta1";
 
 import "google/api/annotations.proto";
-import "grpc/v1beta1/product.proto";
+import "google/api/field_behavior.proto";
 
 // ProductAPI export products listings endpoints.
 service ProductAPI {
@@ -23,8 +23,20 @@ service ProductAPI {
   // `GET /v1/users/me/products` | `ListProducts(user_id: "me")
   rpc ListProducts(ListProductsRequest) returns (ListProductsResponse) {
     option (google.api.http) = {
-      get : "/v1/cataloging/products"
-      additional_bindings : {get : "/v1/users/{user_id}/products"}
+      get: "/v1/cataloging/products"
+      additional_bindings: {get : "/v1/users/{user_id}/products"}
+    };
+  }
+  // CreateProduct.
+  // This enables the following alternative HTTP JSON to RPC mappings:
+  //
+  // HTTP | gRPC
+  // -----|-----
+  // `POST /v1/cataloging/products` | `CreateProducts()`
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse) {
+    option (google.api.http) = {
+      post: "/v1/cataloging/products"
+      body: "*"
     };
   }
 }
@@ -35,7 +47,21 @@ message ListProductsRequest {
   string page_token = 3;
 }
 
+
 message ListProductsResponse {
-  repeated grpc.v1beta1.Product products = 1;
+  repeated CreateProductResponse products = 1;
   string next_page_token = 2;
+}
+
+message CreateProductRequest {
+  string title = 1 [(google.api.field_behavior) = REQUIRED];
+  string description = 2 [(google.api.field_behavior) = REQUIRED];
+  int32 price_in_cents = 3 [(google.api.field_behavior) = REQUIRED];
+}
+
+message CreateProductResponse {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  int32 price_in_cents = 4;
 }

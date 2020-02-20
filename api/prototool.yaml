@@ -9,8 +9,8 @@ lint:
   group: uber2
 create:
   packages:
-    - directory: v1alpha1
-      name: v1alpha1
+    - directory: v1beta1
+      name: v1beta1
 generate:
   go_options:
     import_path: wiliam.dev/product/api
