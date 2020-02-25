@@ -23,8 +23,8 @@ service ProductAPI {
   // `GET /v1/users/me/products` | `ListProducts(user_id: "me")
   rpc ListProducts(ListProductsRequest) returns (ListProductsResponse) {
     option (google.api.http) = {
-      get: "/v1/cataloging/products"
-      additional_bindings: {get : "/v1/users/{user_id}/products"}
+      get: "/v1beta1/cataloging/products"
+      additional_bindings: {get : "/v1beta1/users/{user_id}/products"}
     };
   }
   // CreateProduct.
@@ -35,7 +35,7 @@ service ProductAPI {
   // `POST /v1/cataloging/products` | `CreateProducts()`
   rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse) {
     option (google.api.http) = {
-      post: "/v1/cataloging/products"
+      post: "/v1beta1/cataloging/products"
       body: "*"
     };
   }
@@ -43,14 +43,10 @@ service ProductAPI {
 
 message ListProductsRequest {
   string user_id = 1;
-  int32 page_size = 2;
-  string page_token = 3;
 }
-
 
 message ListProductsResponse {
   repeated CreateProductResponse products = 1;
-  string next_page_token = 2;
 }
 
 message CreateProductRequest {
