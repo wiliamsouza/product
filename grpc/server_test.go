@@ -85,4 +85,32 @@ func TestGRPCServer(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, grpcProducts, response.Products)
 	})
+
+	t.Run("create product", func(t *testing.T) {
+		request := grpcv1.CreateProductRequest{
+			Title:        "Mussum Ipsum",
+			Description:  "cacilds vidis litro abertis",
+			PriceInCents: 10,
+		}
+		mocked := entity.Product{
+			ID:           uuid.NewV4().String(),
+			Title:        "Mussum Ipsum",
+			Description:  "cacilds vidis litro abertis",
+			PriceInCents: 10,
+		}
+		expected := grpcv1.CreateProductResponse{
+			Id:           mocked.ID,
+			Title:        "Mussum Ipsum",
+			Description:  "cacilds vidis litro abertis",
+			PriceInCents: 10,
+		}
+		ctx := context.Background()
+
+		mockedUseCase.On("Create", mock.AnythingOfType("*context.valueCtx"), mock.Anything).Return(&mocked, nil)
+
+		response, err := server.CreateProduct(ctx, &request)
+
+		assert.Nil(t, err)
+		assert.Equal(t, &expected, response)
+	})
 }

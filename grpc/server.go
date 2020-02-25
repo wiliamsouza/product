@@ -4,9 +4,8 @@ import (
 	"context"
 
 	"go.opencensus.io/trace"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"wiliam.dev/product"
+	"wiliam.dev/product/entity"
 	grpcv1 "wiliam.dev/product/grpc/v1beta1"
 )
 
@@ -39,7 +38,6 @@ func (s *ProductAPIServer) ListProducts(
 		trace.Int64Attribute("total", int64(len(products))),
 	}, "Products listed")
 
-	// TODO: Preallocate our initial slice for pagination values.
 	var p []*grpcv1.CreateProductResponse
 	for _, product := range products {
 		p = append(p,
@@ -51,18 +49,48 @@ func (s *ProductAPIServer) ListProducts(
 			})
 	}
 
+	response := &grpcv1.ListProductsResponse{Products: p}
+
 	span.SetStatus(trace.Status{
 		Code:    trace.StatusCodeOK,
 		Message: "Ok",
 	})
 
-	response := &grpcv1.ListProductsResponse{Products: p}
 	return response, nil
 }
 
-// CreateProduct ...
+// CreateProduct create a new product
 func (s *ProductAPIServer) CreateProduct(ctx context.Context, r *grpcv1.CreateProductRequest) (*grpcv1.CreateProductResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateProduct not implemented")
+	ctx, span := trace.StartSpan(ctx, "grpc.ProductAPIServer.CreateProduct")
+	defer span.End()
+
+	p := &entity.Product{
+		Title:        r.Title,
+		Description:  r.Description,
+		PriceInCents: r.PriceInCents,
+	}
+	product, err := s.UseCase.Create(ctx, p)
+	if err != nil {
+		span.SetStatus(trace.Status{
+			Code:    trace.StatusCodeUnknown,
+			Message: err.Error(),
+		})
+		return nil, err
+	}
+
+	response := &grpcv1.CreateProductResponse{
+		Id:           product.ID,
+		Title:        product.Title,
+		Description:  product.Description,
+		PriceInCents: product.PriceInCents,
+	}
+
+	span.SetStatus(trace.Status{
+		Code:    trace.StatusCodeOK,
+		Message: "Ok",
+	})
+
+	return response, nil
 }
 
 // NewProductAPIServer create a grpc product API server
