@@ -5,6 +5,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
+	uuid "github.com/satori/go.uuid"
 	"go.opencensus.io/trace"
 	"wiliam.dev/product"
 	"wiliam.dev/product/entity"
@@ -36,12 +37,44 @@ func (p *ProductDataStore) List(ctx context.Context) ([]*entity.Product, error) 
 	if err != nil {
 		wrappedErr := errors.Wrapf(
 			err,
-			"struct=postgres.ProductProduct, method=List, error=select_fail",
+			"struct=postgres.ProductDataStore, method=List, error=select_fail",
 		)
 		return products, wrappedErr
 	}
 
 	return products, nil
+}
+
+// Create product.
+func (p *ProductDataStore) Create(ctx context.Context, product *entity.Product) (*entity.Product, error) {
+	ctx, span := trace.StartSpan(ctx, "postgres.ProductDataStore.Create")
+	defer span.End()
+	queryStatement := `
+		INSERT
+			INTO
+			product (id,
+			title,
+			description,
+			price_in_cents)
+		VALUES ($1,
+		$2,
+		$3,
+		$4) RETURNING id,
+		title,
+		description,
+		price_in_cents
+	`
+	var result entity.Product
+	err := p.DB.QueryRowxContext(ctx, queryStatement, uuid.NewV4(), product.Title, product.Description, product.PriceInCents).StructScan(&result)
+	if err != nil {
+		wrappedErr := errors.Wrapf(
+			err,
+			"struct=postgres.ProductDataStore, method=Create, error=insert_fail",
+		)
+		return &result, wrappedErr
+	}
+
+	return &result, nil
 }
 
 //NewProductDataStore create a product data store instance.
