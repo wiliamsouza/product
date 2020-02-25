@@ -337,11 +337,11 @@ func RegisterProductAPIHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 }
 
 var (
-	pattern_ProductAPI_ListProducts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "cataloging", "products"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_ProductAPI_ListProducts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1beta1", "cataloging", "products"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_ProductAPI_ListProducts_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "users", "user_id", "products"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_ProductAPI_ListProducts_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1beta1", "users", "user_id", "products"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_ProductAPI_CreateProduct_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "cataloging", "products"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_ProductAPI_CreateProduct_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1beta1", "cataloging", "products"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
