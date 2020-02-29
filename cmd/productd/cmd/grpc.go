@@ -144,8 +144,8 @@ func init() {
 		metricListenAdrress string
 	)
 
-	grpcCmd.PersistentFlags().StringVarP(&dataSourceName, "dsn", "", "postgres://cataloging:cataloging@127.0.0.1:5432/cataloging?sslmode=disable", "Database data source name")
 	grpcCmd.PersistentFlags().StringVarP(&rpcListenAddress, "grpclistenAddress", "", "localhost:13666", "gRPC listen address")
+	grpcCmd.PersistentFlags().StringVarP(&dataSourceName, "dsn", "", "postgres://postgres:swordfish@127.0.0.1:5432/product?sslmode=disable", "Database data source name")
 	grpcCmd.PersistentFlags().StringVarP(&tracerEndpoint, "tracerEndpoint", "", "http://localhost:14268", "Tracing exporter endpoint")
 	grpcCmd.PersistentFlags().StringVarP(&tracerServiceName, "tracerServiceName", "", "product-grpc", "Tracing exporter service name")
 	grpcCmd.PersistentFlags().StringVarP(&metricNamespace, "metricNamespace", "", "product", "Metrics exporter namespace")
