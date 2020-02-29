@@ -6,4 +6,11 @@ type Product struct {
 	Title        string `db:"title"`
 	Description  string `db:"description"`
 	PriceInCents int32  `db:"price_in_cents"`
+	Discount     Discount
+}
+
+// Discount entity.
+type Discount struct {
+	Description  float32
+	PriceInCents int32
 }
