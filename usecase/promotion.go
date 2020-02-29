@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	uuid "github.com/satori/go.uuid"
 	"go.opencensus.io/trace"
 	"google.golang.org/grpc/metadata"
 
@@ -46,7 +45,7 @@ func (u *PromotionUseCase) List(ctx context.Context) ([]*entity.Product, error) 
 
 	for _, p := range products {
 		request := v1alpha1.RetrievePromotionRequest{
-			UserId:    uuid.NewV4().String(),
+			UserId:    userID,
 			ProductId: p.ID,
 		}
 		_, err := u.Promotion.RetrievePromotion(ctx, &request)
