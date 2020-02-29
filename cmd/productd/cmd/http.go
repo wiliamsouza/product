@@ -16,6 +16,16 @@ import (
 	productv1 "wiliam.dev/product/grpc/v1beta1"
 )
 
+/// headerMatcher Map from HTTP request headers to gRPC client metadata
+func headerMatcher(key string) (string, bool) {
+	switch key {
+	case "X-User-Id":
+		return key, true
+	default:
+		return runtime.DefaultHeaderMatcher(key)
+	}
+}
+
 // httpCmd represents the http command
 var httpCmd = &cobra.Command{
 	Use:   "http",
@@ -38,7 +48,6 @@ var httpCmd = &cobra.Command{
 		}
 		trace.RegisterExporter(exporter)
 		trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
-
 		opts := []grpc.DialOption{
 			grpc.WithInsecure(),
 			grpc.WithStatsHandler(&ocgrpc.ClientHandler{}),
@@ -49,13 +58,14 @@ var httpCmd = &cobra.Command{
 		}
 		defer conn.Close()
 
-		mux := runtime.NewServeMux()
+		mux := runtime.NewServeMux(runtime.WithIncomingHeaderMatcher(headerMatcher))
 		err = productv1.RegisterProductAPIHandler(ctx, mux, conn)
 		if err != nil {
 			log.Fatal(err)
 		}
-		nmux := &ochttp.Handler{Handler: mux}
-		err = http.ListenAndServe(viper.GetString("listenAddress"), nmux)
+		omux := &ochttp.Handler{Handler: mux}
+		log.Printf("serving: %s\n", viper.GetString("listenAddress"))
+		err = http.ListenAndServe(viper.GetString("listenAddress"), omux)
 		if err != nil {
 			log.Fatal(err)
 		}
