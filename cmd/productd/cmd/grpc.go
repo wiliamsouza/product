@@ -19,6 +19,7 @@ import (
 	"go.opencensus.io/zpages"
 	"google.golang.org/grpc"
 	grpcServer "wiliam.dev/product/grpc"
+	promotionv1 "wiliam.dev/product/grpc/client/promotion/v1alpha1"
 	productv1 "wiliam.dev/product/grpc/v1beta1"
 	"wiliam.dev/product/postgresql"
 	"wiliam.dev/product/usecase"
@@ -105,9 +106,21 @@ var grpcCmd = &cobra.Command{
 
 		useCase := usecase.NewProductUseCase(dataStore)
 
+		opts := []grpc.DialOption{
+			grpc.WithInsecure(),
+		}
+		conn, err := grpc.Dial("127.0.0.1:50051", opts...)
+		if err != nil {
+			log.Fatalf("did not connect: %v", err)
+		}
+		defer conn.Close()
+
+		promotionClient := promotionv1.NewPromotionAPIClient(conn)
+		withPromotionProduct := usecase.NewPromotionUseCase(useCase, promotionClient)
+
 		server := grpc.NewServer(grpc.StatsHandler(&ocgrpc.ServerHandler{}))
 
-		productServer := grpcServer.NewProductAPIServer(useCase)
+		productServer := grpcServer.NewProductAPIServer(withPromotionProduct)
 
 		productv1.RegisterProductAPIServer(server, productServer)
 
