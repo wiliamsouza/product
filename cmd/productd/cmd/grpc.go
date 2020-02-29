@@ -72,7 +72,7 @@ var grpcCmd = &cobra.Command{
 			}
 		}()
 
-		l, err := net.Listen("tcp", viper.GetString("listenAddress"))
+		l, err := net.Listen("tcp", viper.GetString("grpclistenAddress"))
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
 		}
@@ -111,7 +111,7 @@ var grpcCmd = &cobra.Command{
 
 		productv1.RegisterProductAPIServer(server, productServer)
 
-		log.Printf("serving: %s", viper.GetString("listenAddress"))
+		log.Printf("serving: %s\n", viper.GetString("grpclistenAddress"))
 		err = server.Serve(l)
 		if err != nil {
 			log.Fatalf("failed to serve: %v", err)
@@ -131,14 +131,14 @@ func init() {
 		metricListenAdrress string
 	)
 
-	grpcCmd.PersistentFlags().StringVarP(&rpcListenAddress, "listenAddress", "", "localhost:13666", "gRPC listen address")
 	grpcCmd.PersistentFlags().StringVarP(&dataSourceName, "dsn", "", "postgres://cataloging:cataloging@127.0.0.1:5432/cataloging?sslmode=disable", "Database data source name")
+	grpcCmd.PersistentFlags().StringVarP(&rpcListenAddress, "grpclistenAddress", "", "localhost:13666", "gRPC listen address")
 	grpcCmd.PersistentFlags().StringVarP(&tracerEndpoint, "tracerEndpoint", "", "http://localhost:14268", "Tracing exporter endpoint")
 	grpcCmd.PersistentFlags().StringVarP(&tracerServiceName, "tracerServiceName", "", "product-grpc", "Tracing exporter service name")
 	grpcCmd.PersistentFlags().StringVarP(&metricNamespace, "metricNamespace", "", "product", "Metrics exporter namespace")
 	grpcCmd.PersistentFlags().StringVarP(&metricListenAdrress, "metricListenAdrress", "", "localhost:8888", "Metrics listen address")
 
-	err := viper.BindPFlag("listenAddress", grpcCmd.PersistentFlags().Lookup("listenAddress"))
+	err := viper.BindPFlag("grpclistenAddress", grpcCmd.PersistentFlags().Lookup("grpclistenAddress"))
 	if err != nil {
 		log.Fatalf("failed to bind flag: %v", err)
 	}
