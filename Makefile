@@ -41,6 +41,7 @@ coverage:
 	go tool cover -func=count.out
 
 test: ## Run unit tests
+	touch count.out
 	go test -covermode=count -coverprofile=count.out -v ./...
 	$(MAKE) coverage
 
