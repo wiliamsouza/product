@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"contrib.go.opencensus.io/exporter/jaeger"
 	"github.com/spf13/cobra"
@@ -22,17 +23,11 @@ var clientCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		address := fmt.Sprintf("%s:%d", viper.GetString("host"), viper.GetInt("port"))
 
-		// Metrics
-		//view.RegisterExporter(&exporter.PrintExporter{})
-		//if err := view.Register(ocgrpc.DefaultClientViews...); err != nil {
-		//	log.Fatal(err)
-		//}
-
 		// Tracing
 		exporter, err := jaeger.NewExporter(jaeger.Options{
-			Endpoint: "http://localhost:14268",
+			Endpoint: viper.GetString("clientTracerEndpoint"),
 			Process: jaeger.Process{
-				ServiceName: "product-grpc",
+				ServiceName: viper.GetString("clientTracerServiceName"),
 			},
 		})
 		if err != nil {
@@ -54,17 +49,15 @@ var clientCmd = &cobra.Command{
 
 		c := grpcv1.NewProductAPIClient(conn)
 
-		//ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-		//defer cancel()
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
 
-		//ctx, span := trace.StartSpan(context.Background(), "product-grpc-client")
-		//defer span.End()
+		ctx, span := trace.StartSpan(ctx, viper.GetString("clientTracerServiceName"))
+		defer span.End()
 
-		//view.SetReportingPeriod(time.Second)
-
-		r, err := c.ListProducts(context.Background(), &grpcv1.ListProductsRequest{UserId: "UUID"})
+		r, err := c.ListProducts(ctx, &grpcv1.ListProductsRequest{UserId: "UUID"})
 		if err != nil {
-			//span.SetStatus(trace.Status{Code: trace.StatusCodeInternal, Message: err.Error()})
+			span.SetStatus(trace.Status{Code: trace.StatusCodeInternal, Message: err.Error()})
 			log.Fatalf("could not list products: %v", err)
 		}
 
@@ -76,12 +69,16 @@ var clientCmd = &cobra.Command{
 
 func init() {
 	var (
-		host string
-		port int
+		host              string
+		port              int
+		tracerEndpoint    string
+		tracerServiceName string
 	)
 	rootCmd.AddCommand(clientCmd)
 	clientCmd.PersistentFlags().StringVarP(&host, "host", "", "localhost", "Host name or IP address")
 	clientCmd.PersistentFlags().IntVarP(&port, "port", "", 13666, "Port number to listen")
+	clientCmd.PersistentFlags().StringVarP(&tracerEndpoint, "clientTracerEndpoint", "", "http://localhost:14268", "Tracing exporter endpoint")
+	clientCmd.PersistentFlags().StringVarP(&tracerServiceName, "clientTtracerServiceName", "", "product-grpc-client", "Tracing exporter service name")
 	err := viper.BindPFlag("host", clientCmd.PersistentFlags().Lookup("host"))
 	if err != nil {
 		log.Fatalf("failed to bind flag: %v", err)
@@ -91,5 +88,13 @@ func init() {
 	if err != nil {
 		log.Fatalf("failed to bind flag: %v", err)
 
+	}
+	err = viper.BindPFlag("clientTracerEndpoint", clientCmd.PersistentFlags().Lookup("clientTracerEndpoint"))
+	if err != nil {
+		log.Fatalf("failed to bind flag: %v", err)
+	}
+	err = viper.BindPFlag("clientTracerServiceName", clientCmd.PersistentFlags().Lookup("clientTracerServiceName"))
+	if err != nil {
+		log.Fatalf("failed to bind flag: %v", err)
 	}
 }
