@@ -109,7 +109,7 @@ var grpcCmd = &cobra.Command{
 		opts := []grpc.DialOption{
 			grpc.WithInsecure(),
 		}
-		conn, err := grpc.Dial("127.0.0.1:50051", opts...)
+		conn, err := grpc.Dial(viper.GetString("promotionConnectAddress"), opts...)
 		if err != nil {
 			log.Fatalf("did not connect: %v", err)
 		}
@@ -142,6 +142,7 @@ func init() {
 		tracerServiceName   string
 		metricNamespace     string
 		metricListenAdrress string
+		connectAddress      string
 	)
 
 	grpcCmd.PersistentFlags().StringVarP(&rpcListenAddress, "grpclistenAddress", "", "localhost:13666", "gRPC listen address")
@@ -150,6 +151,7 @@ func init() {
 	grpcCmd.PersistentFlags().StringVarP(&tracerServiceName, "tracerServiceName", "", "product-grpc", "Tracing exporter service name")
 	grpcCmd.PersistentFlags().StringVarP(&metricNamespace, "metricNamespace", "", "product", "Metrics exporter namespace")
 	grpcCmd.PersistentFlags().StringVarP(&metricListenAdrress, "metricListenAdrress", "", "localhost:8888", "Metrics listen address")
+	httpCmd.PersistentFlags().StringVarP(&connectAddress, "promotionConnectAddress", "", "localhost:13666", "gRPC address to connect")
 
 	err := viper.BindPFlag("grpclistenAddress", grpcCmd.PersistentFlags().Lookup("grpclistenAddress"))
 	if err != nil {
@@ -172,6 +174,10 @@ func init() {
 		log.Fatalf("failed to bind flag: %v", err)
 	}
 	err = viper.BindPFlag("metricListenAdrress", grpcCmd.PersistentFlags().Lookup("metricListenAdrress"))
+	if err != nil {
+		log.Fatalf("failed to bind flag: %v", err)
+	}
+	err = viper.BindPFlag("promotionConnectAddress", httpCmd.PersistentFlags().Lookup("promotionConnectAddress"))
 	if err != nil {
 		log.Fatalf("failed to bind flag: %v", err)
 	}
