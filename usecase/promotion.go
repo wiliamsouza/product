@@ -44,15 +44,20 @@ func (u *PromotionUseCase) List(ctx context.Context) ([]*entity.Product, error) 
 	}
 
 	for _, p := range products {
+		ctxPromotion, spanPromotion := trace.StartSpan(ctx, "usecase.PromotionUseCase.List")
+		defer spanPromotion.End()
 		request := v1alpha1.RetrievePromotionRequest{
 			UserId:    userID,
 			ProductId: p.ID,
 		}
-		_, err := u.Promotion.RetrievePromotion(ctx, &request)
+		_, err := u.Promotion.RetrievePromotion(ctxPromotion, &request)
 		if err != nil {
 			log.Printf("struct=usecase.PromotionUseCase, method=List, error=%s", err)
+			spanPromotion.SetStatus(trace.Status{Code: trace.StatusCodeInternal, Message: err.Error()})
+			continue
 		}
 	}
+
 	return products, nil
 }
 
