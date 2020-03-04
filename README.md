@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/wiliamsouza/product.svg?style=shield)](https://app.circleci.com/pipelines/github/wiliamsouza/product?branch=master)
+
 # Product service
 
 Product listing for your ecommerce store.
