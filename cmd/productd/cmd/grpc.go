@@ -4,19 +4,15 @@ import (
 	"database/sql"
 	"log"
 	"net"
-	"net/http"
 	"time"
 
 	"contrib.go.opencensus.io/exporter/jaeger"
-	"contrib.go.opencensus.io/exporter/prometheus"
 	"contrib.go.opencensus.io/integrations/ocsql"
 	"github.com/jmoiron/sqlx"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.opencensus.io/plugin/ocgrpc"
-	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
-	"go.opencensus.io/zpages"
 	"google.golang.org/grpc"
 	grpcServer "wiliam.dev/product/grpc"
 	promotionv1 "wiliam.dev/product/grpc/client/promotion/v1alpha1"
@@ -44,34 +40,6 @@ var grpcCmd = &cobra.Command{
 		}
 		trace.RegisterExporter(tracingExporter)
 		trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
-
-		// Metrics
-		metricsExporter, err := prometheus.NewExporter(prometheus.Options{
-			Namespace: viper.GetString("metricNamespace"),
-		})
-		if err != nil {
-			log.Fatal(err)
-		}
-		view.SetReportingPeriod(60 * time.Second)
-		view.RegisterExporter(metricsExporter)
-		if err = view.Register(ocgrpc.DefaultServerViews...); err != nil {
-			log.Fatalf("error registering default server views: %v", err)
-		} else {
-			log.Print("registered default gRPC server metrics views")
-		}
-
-		go func() {
-			mux := http.NewServeMux()
-			// enable OpenCensus zPages
-			zpages.Handle(mux, "/debug")
-
-			// Enable ocsql metrics with OpenCensus
-			ocsql.RegisterAllViews()
-			mux.Handle("/metrics", metricsExporter)
-			if err = http.ListenAndServe(viper.GetString("metricListenAdrress"), mux); err != nil {
-				log.Fatalf("failed to run metrics scrape endpoint: %v", err)
-			}
-		}()
 
 		l, err := net.Listen("tcp", viper.GetString("grpclistenAddress"))
 		if err != nil {
@@ -136,21 +104,17 @@ func init() {
 	serveCmd.AddCommand(grpcCmd)
 
 	var (
-		rpcListenAddress    string
-		dataSourceName      string
-		tracerEndpoint      string
-		tracerServiceName   string
-		metricNamespace     string
-		metricListenAdrress string
-		connectAddress      string
+		rpcListenAddress  string
+		dataSourceName    string
+		tracerEndpoint    string
+		tracerServiceName string
+		connectAddress    string
 	)
 
 	grpcCmd.PersistentFlags().StringVarP(&rpcListenAddress, "grpclistenAddress", "", "localhost:13666", "gRPC listen address")
 	grpcCmd.PersistentFlags().StringVarP(&dataSourceName, "dsn", "", "postgres://postgres:swordfish@127.0.0.1:5432/product?sslmode=disable", "Database data source name")
 	grpcCmd.PersistentFlags().StringVarP(&tracerEndpoint, "tracerEndpoint", "", "http://localhost:14268", "Tracing exporter endpoint")
 	grpcCmd.PersistentFlags().StringVarP(&tracerServiceName, "tracerServiceName", "", "product-grpc", "Tracing exporter service name")
-	grpcCmd.PersistentFlags().StringVarP(&metricNamespace, "metricNamespace", "", "product", "Metrics exporter namespace")
-	grpcCmd.PersistentFlags().StringVarP(&metricListenAdrress, "metricListenAdrress", "", "localhost:8888", "Metrics listen address")
 	httpCmd.PersistentFlags().StringVarP(&connectAddress, "promotionConnectAddress", "", "localhost:13666", "gRPC address to connect")
 
 	err := viper.BindPFlag("grpclistenAddress", grpcCmd.PersistentFlags().Lookup("grpclistenAddress"))
@@ -166,14 +130,6 @@ func init() {
 		log.Fatalf("failed to bind flag: %v", err)
 	}
 	err = viper.BindPFlag("tracerServiceName", grpcCmd.PersistentFlags().Lookup("tracerServiceName"))
-	if err != nil {
-		log.Fatalf("failed to bind flag: %v", err)
-	}
-	err = viper.BindPFlag("metricNamespace", grpcCmd.PersistentFlags().Lookup("metricNamespace"))
-	if err != nil {
-		log.Fatalf("failed to bind flag: %v", err)
-	}
-	err = viper.BindPFlag("metricListenAdrress", grpcCmd.PersistentFlags().Lookup("metricListenAdrress"))
 	if err != nil {
 		log.Fatalf("failed to bind flag: %v", err)
 	}
