@@ -38,15 +38,14 @@ func (s *ProductAPIServer) ListProducts(
 		trace.Int64Attribute("total", int64(len(products))),
 	}, "Products listed")
 
-	var p []*grpcv1.CreateProductResponse
-	for _, product := range products {
-		p = append(p,
-			&grpcv1.CreateProductResponse{
-				Id:           product.ID,
-				Title:        product.Title,
-				Description:  product.Description,
-				PriceInCents: product.PriceInCents,
-			})
+	p := make([]*grpcv1.CreateProductResponse, len(products))
+	for i, product := range products {
+		p[i] = &grpcv1.CreateProductResponse{
+			Id:           product.ID,
+			Title:        product.Title,
+			Description:  product.Description,
+			PriceInCents: product.PriceInCents,
+		}
 	}
 
 	response := &grpcv1.ListProductsResponse{Products: p}
