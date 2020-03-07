@@ -24,8 +24,8 @@ run:
     - scripts
     - proto
     - mocks
-    - http/v1
-    - grpc/v1
+    - grpc/client
+    - grpc/v1beta1
 
   # which files to skip: they will be analyzed, but issues from them
   # won't be reported. Default value is empty list, but there is
@@ -168,3 +168,5 @@ linters-settings:
 
 linters:
   enable-all: true
+  disable:
+    - funlen

@@ -13,6 +13,7 @@ import (
 )
 
 func TestGRPCServer(t *testing.T) {
+	var price int32 = 10
 
 	mockedUseCase := mocks.UseCase{}
 	server := NewProductAPIServer(&mockedUseCase)
@@ -23,7 +24,7 @@ func TestGRPCServer(t *testing.T) {
 				ID:           uuid.NewV4().String(),
 				Title:        "Mussum Ipsum",
 				Description:  "cacilds vidis litro abertis",
-				PriceInCents: 10,
+				PriceInCents: price,
 			},
 		}
 		grpcProducts := []*grpcv1.CreateProductResponse{
@@ -31,7 +32,7 @@ func TestGRPCServer(t *testing.T) {
 				Id:           products[0].ID,
 				Title:        "Mussum Ipsum",
 				Description:  "cacilds vidis litro abertis",
-				PriceInCents: 10,
+				PriceInCents: price,
 			},
 		}
 		request := grpcv1.ListProductsRequest{}
@@ -52,13 +53,13 @@ func TestGRPCServer(t *testing.T) {
 				ID:           uuid.NewV4().String(),
 				Title:        "Mussum Ipsum",
 				Description:  "cacilds vidis litro abertis",
-				PriceInCents: 10,
+				PriceInCents: price,
 			},
 			{
 				ID:           uuid.NewV4().String(),
 				Title:        "cacilds vidis",
 				Description:  "Todo mundo vê os porris que eu tomo",
-				PriceInCents: 15,
+				PriceInCents: price,
 			},
 		}
 		grpcProducts := []*grpcv1.CreateProductResponse{
@@ -66,13 +67,13 @@ func TestGRPCServer(t *testing.T) {
 				Id:           products[0].ID,
 				Title:        "Mussum Ipsum",
 				Description:  "cacilds vidis litro abertis",
-				PriceInCents: 10,
+				PriceInCents: price,
 			},
 			{
 				Id:           products[1].ID,
 				Title:        "cacilds vidis",
 				Description:  "Todo mundo vê os porris que eu tomo",
-				PriceInCents: 15,
+				PriceInCents: price,
 			},
 		}
 		request := grpcv1.ListProductsRequest{}
@@ -90,19 +91,19 @@ func TestGRPCServer(t *testing.T) {
 		request := grpcv1.CreateProductRequest{
 			Title:        "Mussum Ipsum",
 			Description:  "cacilds vidis litro abertis",
-			PriceInCents: 10,
+			PriceInCents: price,
 		}
 		mocked := entity.Product{
 			ID:           uuid.NewV4().String(),
 			Title:        "Mussum Ipsum",
 			Description:  "cacilds vidis litro abertis",
-			PriceInCents: 10,
+			PriceInCents: price,
 		}
 		expected := grpcv1.CreateProductResponse{
 			Id:           mocked.ID,
 			Title:        "Mussum Ipsum",
 			Description:  "cacilds vidis litro abertis",
-			PriceInCents: 10,
+			PriceInCents: price,
 		}
 		ctx := context.Background()
 

@@ -15,6 +15,8 @@ func TestProductUseCase(t *testing.T) {
 	mockedDataStore := mocks.DataStore{}
 	useCase := NewProductUseCase(&mockedDataStore)
 
+	var price int32 = 10
+
 	t.Run("Test list", func(t *testing.T) {
 		ctx := context.TODO()
 		products := []*entity.Product{}
@@ -29,19 +31,19 @@ func TestProductUseCase(t *testing.T) {
 		product := entity.Product{
 			Title:        "Mussum Ipsum",
 			Description:  "cacilds vidis litro abertis",
-			PriceInCents: 10,
+			PriceInCents: price,
 		}
 		mocked := entity.Product{
 			ID:           uuid.NewV4().String(),
 			Title:        "Mussum Ipsum",
 			Description:  "cacilds vidis litro abertis",
-			PriceInCents: 10,
+			PriceInCents: price,
 		}
 		expected := entity.Product{
 			ID:           mocked.ID,
 			Title:        "Mussum Ipsum",
 			Description:  "cacilds vidis litro abertis",
-			PriceInCents: 10,
+			PriceInCents: price,
 		}
 		mockedDataStore.On("Create", mock.AnythingOfType("*context.valueCtx"), mock.Anything).Return(&mocked, nil)
 		productFromDataStore, err := useCase.Create(ctx, &product)

@@ -21,7 +21,6 @@ type ProductAPIServer struct {
 func (s *ProductAPIServer) ListProducts(
 	ctx context.Context,
 	r *grpcv1.ListProductsRequest) (*grpcv1.ListProductsResponse, error) {
-
 	ctx, span := trace.StartSpan(ctx, "grpc.ProductAPIServer.ListProducts")
 	defer span.End()
 
@@ -31,6 +30,7 @@ func (s *ProductAPIServer) ListProducts(
 			Code:    trace.StatusCodeUnknown,
 			Message: err.Error(),
 		})
+
 		return nil, err
 	}
 
@@ -59,7 +59,9 @@ func (s *ProductAPIServer) ListProducts(
 }
 
 // CreateProduct create a new product
-func (s *ProductAPIServer) CreateProduct(ctx context.Context, r *grpcv1.CreateProductRequest) (*grpcv1.CreateProductResponse, error) {
+func (s *ProductAPIServer) CreateProduct(
+	ctx context.Context,
+	r *grpcv1.CreateProductRequest) (*grpcv1.CreateProductResponse, error) {
 	ctx, span := trace.StartSpan(ctx, "grpc.ProductAPIServer.CreateProduct")
 	defer span.End()
 
@@ -68,12 +70,14 @@ func (s *ProductAPIServer) CreateProduct(ctx context.Context, r *grpcv1.CreatePr
 		Description:  r.Description,
 		PriceInCents: r.PriceInCents,
 	}
+
 	product, err := s.UseCase.Create(ctx, p)
 	if err != nil {
 		span.SetStatus(trace.Status{
 			Code:    trace.StatusCodeUnknown,
 			Message: err.Error(),
 		})
+
 		return nil, err
 	}
 

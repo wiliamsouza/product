@@ -23,7 +23,9 @@ type ProductDataStore struct {
 func (p *ProductDataStore) List(ctx context.Context) ([]*entity.Product, error) {
 	ctx, span := trace.StartSpan(ctx, "postgres.ProductDataStore.List")
 	defer span.End()
+
 	var products = []*entity.Product{}
+
 	queryStatement := `
 		SELECT
 			id,
@@ -33,12 +35,14 @@ func (p *ProductDataStore) List(ctx context.Context) ([]*entity.Product, error) 
 		FROM
 			product
 	`
+
 	err := p.DB.SelectContext(ctx, &products, queryStatement)
 	if err != nil {
 		wrappedErr := errors.Wrapf(
 			err,
 			"struct=postgres.ProductDataStore, method=List, error=select_fail",
 		)
+
 		return products, wrappedErr
 	}
 
@@ -49,6 +53,7 @@ func (p *ProductDataStore) List(ctx context.Context) ([]*entity.Product, error) 
 func (p *ProductDataStore) Create(ctx context.Context, product *entity.Product) (*entity.Product, error) {
 	ctx, span := trace.StartSpan(ctx, "postgres.ProductDataStore.Create")
 	defer span.End()
+
 	queryStatement := `
 		INSERT
 			INTO
@@ -64,13 +69,23 @@ func (p *ProductDataStore) Create(ctx context.Context, product *entity.Product) 
 		description,
 		price_in_cents
 	`
+
 	var result entity.Product
-	err := p.DB.QueryRowxContext(ctx, queryStatement, uuid.NewV4(), product.Title, product.Description, product.PriceInCents).StructScan(&result)
+
+	err := p.DB.QueryRowxContext(
+		ctx,
+		queryStatement,
+		uuid.NewV4(),
+		product.Title,
+		product.Description,
+		product.PriceInCents,
+	).StructScan(&result)
 	if err != nil {
 		wrappedErr := errors.Wrapf(
 			err,
 			"struct=postgres.ProductDataStore, method=Create, error=insert_fail",
 		)
+
 		return &result, wrappedErr
 	}
 

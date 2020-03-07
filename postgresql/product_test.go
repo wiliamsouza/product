@@ -11,7 +11,6 @@ import (
 )
 
 func TestProductDataStore(t *testing.T) {
-
 	queryStatement := `
 		SELECT
 			id,
