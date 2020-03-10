@@ -36,6 +36,7 @@ mock: ## Generate mocks for repositories and services interfaces
 	rm -rf mocks
 	mockery -name DataStore
 	mockery -name UseCase
+	mockery -dir ./grpc/client/promotion/v1alpha1/ -name PromotionAPIClient
 
 coverage:
 	go tool cover -func=count.out
