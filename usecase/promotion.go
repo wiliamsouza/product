@@ -5,6 +5,7 @@ import (
 	"log"
 	"math"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 	"go.opencensus.io/trace"
@@ -48,7 +49,10 @@ func (u *PromotionUseCase) List(ctx context.Context) ([]*entity.Product, error) 
 	}
 
 	for _, p := range products {
-		ctxPromotion, spanPromotion := trace.StartSpan(ctx, "usecase.PromotionUseCase.RetrievePromotion")
+		ctxTimeout, cancel := context.WithTimeout(ctx, time.Second)
+		defer cancel()
+
+		ctxPromotion, spanPromotion := trace.StartSpan(ctxTimeout, "usecase.PromotionUseCase.RetrievePromotion")
 		defer spanPromotion.End()
 
 		request := v1alpha1.RetrievePromotionRequest{
