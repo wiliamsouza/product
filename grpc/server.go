@@ -45,6 +45,10 @@ func (s *ProductAPIServer) ListProducts(
 			Title:        product.Title,
 			Description:  product.Description,
 			PriceInCents: product.PriceInCents,
+			Discount: &grpcv1.Discount{
+				Pct:          product.Discount.Pct,
+				ValueInCents: product.Discount.ValueInCents,
+			},
 		}
 	}
 

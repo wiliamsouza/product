@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"log"
+	"math"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -47,7 +48,7 @@ func (u *PromotionUseCase) List(ctx context.Context) ([]*entity.Product, error) 
 	}
 
 	for _, p := range products {
-		ctxPromotion, spanPromotion := trace.StartSpan(ctx, "usecase.PromotionUseCase.List")
+		ctxPromotion, spanPromotion := trace.StartSpan(ctx, "usecase.PromotionUseCase.RetrievePromotion")
 		defer spanPromotion.End()
 
 		request := v1alpha1.RetrievePromotionRequest{
@@ -55,12 +56,22 @@ func (u *PromotionUseCase) List(ctx context.Context) ([]*entity.Product, error) 
 			ProductId: p.ID,
 		}
 
-		_, err := u.Promotion.RetrievePromotion(ctxPromotion, &request)
+		promotion, err := u.Promotion.RetrievePromotion(ctxPromotion, &request)
 		if err != nil {
 			log.Printf("struct=usecase.PromotionUseCase, method=List, error=%s", err)
 			spanPromotion.SetStatus(trace.Status{Code: trace.StatusCodeInternal, Message: err.Error()})
 
 			continue
+		}
+		d := promotion.Discounts[0]
+		valueInCents := ((float32(p.PriceInCents) * d.Pct) / 100)
+		// Using math.Ceil here to avoid problem with products
+		// with lower price ie: 10 cents where if given 5% of
+		// discount will result in 0.5 cents which is not compatible
+		// with API definition that required value_in_cents to be int.
+		p.Discount = entity.Discount{
+			Pct:          d.Pct,
+			ValueInCents: int32(math.Ceil(float64(valueInCents))),
 		}
 	}
 

@@ -11,6 +11,6 @@ type Product struct {
 
 // Discount entity.
 type Discount struct {
-	Description  float32
-	PriceInCents int32
+	Pct          float32
+	ValueInCents int32
 }

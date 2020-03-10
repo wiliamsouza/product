@@ -25,6 +25,7 @@ func TestGRPCServer(t *testing.T) {
 				Title:        "Mussum Ipsum",
 				Description:  "cacilds vidis litro abertis",
 				PriceInCents: price,
+				Discount:     entity.Discount{},
 			},
 		}
 		grpcProducts := []*grpcv1.CreateProductResponse{
@@ -33,6 +34,7 @@ func TestGRPCServer(t *testing.T) {
 				Title:        "Mussum Ipsum",
 				Description:  "cacilds vidis litro abertis",
 				PriceInCents: price,
+				Discount:     &grpcv1.Discount{},
 			},
 		}
 		request := grpcv1.ListProductsRequest{}
@@ -54,12 +56,14 @@ func TestGRPCServer(t *testing.T) {
 				Title:        "Mussum Ipsum",
 				Description:  "cacilds vidis litro abertis",
 				PriceInCents: price,
+				Discount:     entity.Discount{},
 			},
 			{
 				ID:           uuid.NewV4().String(),
 				Title:        "cacilds vidis",
 				Description:  "Todo mundo vê os porris que eu tomo",
 				PriceInCents: price,
+				Discount:     entity.Discount{},
 			},
 		}
 		grpcProducts := []*grpcv1.CreateProductResponse{
@@ -68,12 +72,14 @@ func TestGRPCServer(t *testing.T) {
 				Title:        "Mussum Ipsum",
 				Description:  "cacilds vidis litro abertis",
 				PriceInCents: price,
+				Discount:     &grpcv1.Discount{},
 			},
 			{
 				Id:           products[1].ID,
 				Title:        "cacilds vidis",
 				Description:  "Todo mundo vê os porris que eu tomo",
 				PriceInCents: price,
+				Discount:     &grpcv1.Discount{},
 			},
 		}
 		request := grpcv1.ListProductsRequest{}
