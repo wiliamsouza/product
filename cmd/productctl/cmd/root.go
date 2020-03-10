@@ -15,7 +15,7 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "productctl",
 	Short: "Product client gRPC server",
-	Long:  `Productctl is a client for product gRPC service that implements products listings.`,
+	Long:  `This is used to interact with product gRPC or HTTP services.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

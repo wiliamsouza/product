@@ -76,6 +76,7 @@ var grpcCmd = &cobra.Command{
 
 		opts := []grpc.DialOption{
 			grpc.WithInsecure(),
+			grpc.WithStatsHandler(&ocgrpc.ClientHandler{}),
 		}
 		conn, err := grpc.Dial(viper.GetString("promotionConnectAddress"), opts...)
 		if err != nil {
