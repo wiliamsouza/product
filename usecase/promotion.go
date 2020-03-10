@@ -13,7 +13,7 @@ import (
 
 	"wiliam.dev/product"
 	"wiliam.dev/product/entity"
-	"wiliam.dev/product/grpc/client/promotion/v1alpha1"
+	promotionv1 "wiliam.dev/product/grpc/client/promotion/v1alpha1"
 )
 
 // Ensure PromotionUseCase implements product.UseCase interface.
@@ -21,7 +21,7 @@ var _ product.UseCase = &PromotionUseCase{}
 
 //PromotionUseCase implements and extend product.UseCase interface using decorator design pattern.
 type PromotionUseCase struct {
-	Promotion v1alpha1.PromotionAPIClient
+	Promotion promotionv1.PromotionAPIClient
 	Product   product.UseCase
 }
 
@@ -55,7 +55,7 @@ func (u *PromotionUseCase) List(ctx context.Context) ([]*entity.Product, error) 
 		ctxPromotion, spanPromotion := trace.StartSpan(ctxTimeout, "usecase.PromotionUseCase.RetrievePromotion")
 		defer spanPromotion.End()
 
-		request := v1alpha1.RetrievePromotionRequest{
+		request := promotionv1.RetrievePromotionRequest{
 			UserId:    userID,
 			ProductId: p.ID,
 		}
@@ -89,7 +89,7 @@ func (u *PromotionUseCase) Create(ctx context.Context, p *entity.Product) (*enti
 }
 
 //NewPromotionUseCase create a product use case instance.
-func NewPromotionUseCase(product product.UseCase, promotion v1alpha1.PromotionAPIClient) *PromotionUseCase {
+func NewPromotionUseCase(product product.UseCase, promotion promotionv1.PromotionAPIClient) *PromotionUseCase {
 	return &PromotionUseCase{
 		Promotion: promotion,
 		Product:   product,
