@@ -63,6 +63,7 @@ func (u *PromotionUseCase) List(ctx context.Context) ([]*entity.Product, error) 
 
 			continue
 		}
+
 		d := promotion.Discounts[0]
 		valueInCents := ((float32(p.PriceInCents) * d.Pct) / 100)
 		// Using math.Ceil here to avoid problem with products
