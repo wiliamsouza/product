@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package grpc.v1beta1;
+
+option csharp_namespace = "Grpc.V1Beta1";
+option go_package = "grpcv1beta1";
+option java_multiple_files = true;
+option java_outer_classname = "DiscountProto";
+option java_package = "com.grpc.v1beta1";
+option objc_class_prefix = "GXX";
+option php_namespace = "Grpc\\V1Beta1";
+
+// Discount message.
+message Discount {
+  float pct = 1;
+  int32 value_in_cents = 2;
+}

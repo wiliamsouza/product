@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package grpc.v1beta1;
+
 option csharp_namespace = "Grpc.V1Beta1";
 option go_package = "grpcv1beta1";
 option java_multiple_files = true;
@@ -11,6 +12,7 @@ option php_namespace = "Grpc\\V1Beta1";
 
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
+import "grpc/v1beta1/discount.proto";
 
 // ProductAPI export products listings endpoints.
 service ProductAPI {
@@ -60,4 +62,5 @@ message CreateProductResponse {
   string title = 2;
   string description = 3;
   int32 price_in_cents = 4;
+  grpc.v1beta1.Discount discount = 5;
 }
